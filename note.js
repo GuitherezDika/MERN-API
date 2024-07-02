@@ -56,6 +56,11 @@
         package.json == data versi package instalasi
     = semua ini wajib di simpan di repository
 
+    = git add .
     = terminal = git commit -m 'first initialize'
+    = git branch -m "main"
+    = git branch => main
+    = git remote add origin https://github.com/GuitherezDika/MERN-API.git
+    
     */
 }
