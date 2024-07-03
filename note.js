@@ -61,6 +61,124 @@
     = git branch -m "main"
     = git branch => main
     = git remote add origin https://github.com/GuitherezDika/MERN-API.git
+    = git push origin main
+
+    5. BASIC ROUTING
+    https://expressjs.com/en/starter/basic-routing.html
+    = ROUTING mengacu pada penentuan bagaimana applikasi meresponds terhadap request client terhadap endpoint tertentu, yaitu URI (path) dan metode permintaan tertentu HTTP
+    = structure: 
+        app.METHOD(PATH, HANDLER)
+    = app: instance of express
+    = METHOD: an HTTP request method in lowercase
+    = PATH: a path on the server
+    = HANDLER: is the function executed when the route is matched
+
+    ROUTE PARAMETERS
+    capture the values specified at their position in the URL
+    the captured values are populated in the req.params object
+
+    Route path: /users/:userId/books/:bookId
+    Request URL : http://localhost:3000/users/34/books/8989
+    req.params : {"userId": "34", "bookId": "8989"}
+
+    interpret hyphen (-) & and (&)
+    Route.path: /flights/:from-:to
+    Request URL: http://localhost:3000/flights/LAX-SFO
+    req.params: {"from": "LAX", "to": "SFO"}
+
+    Route path: /plantae/:genus.:species
+    Request URL: http://localhost:3000/plantae/Prunus&persica
+    req.params: {"genus":"Prunus", "species": "persica"}
+
+    dalam POSTMAN
+    untuk Parameters 
+        ->table Query Params 
+        http://localhost:3000/user/?id=12&username=dika
+        key = id: 12
+            username: dika
+
+        ->table Params Path Variables
+        http://localhost:3000/user/:id/name/:username
+        path variables: 
+        key = id : 12
+            = username : dika
+
+    ROUTE HANDLERS
+    = multiple callback functions 
+    = behave like middleware to handle a request
+    = single callback function to handle a route
+    = more than one callback function
+    
+    const middleware1 = (req, res, next) => {
+        console.log('middleware 1');
+        next()
+    }
+
+    const middleware2 = (req, res, next) => {
+        console.log('middleware 2');
+        next()
+    }
+
+    app.get('/callback/a', middleware1, middleware2, (req, res, next) => {
+        res.send('Hello from A!')
+        next()
+    })
+
+    or
+    app.get('/callback/a', [middleware1, middleware2], (req, res, next) => {
+        console.log('Final route handler');
+        res.send('Hello from A!!')
+        next()
+    })
+
+    bentuk simplifikasi BASIC ROUTING
+    app.route('/user')
+        .put( (req, res) => {
+        res.send('Got a PUT request at /user route')
+        })
+        .delete((req, res) => {
+        res.send('Got a DELETE request at /user route')
+    })
+
+    ========================================================
+
+    // BASIC ROUTING
+    app.get('/', (req, res) => {
+        res.send('Hello World')
+    })
+
+    // handle all methods
+    app.all()
+
+    // to specify midlleware as the callback functions
+    app.use()
+
+    express.Router
+    is a class to create modular, mountable route handlers
+    router = a module
+    run a middleware functions
+
+    const express = require('express');
+    const app = express.Router()
+
+    TEORI
+    Express Application can use the following types of middleware:
+    1. application-level middleware = for entire application not specific route
+    2. router-level middleware
+    3. error-handling middleware
+    4. built-in middleware
+    5. third-party middleware
+
+    1. application-level middleware
+
+    to bind application-level middleware menggunakan 
+        -> app.use()
+        -> app.METHOD() ; get/post/put/patch/delete ....
+
+    mount path = ('/user/:id', (req, res) => {})
+    unmount path = ((req, res) => {})
+
+
     
     */
 }
