@@ -1,73 +1,59 @@
 const express = require('express');
 const app = express();
-const router = express.Router()
-const port = 3000;
+const router = express.Router();
 
-app.get('/profile', (req, res) => {
-    res.send("get profile OK, get method to access Entire Application ")
-})
+// Middleware pada level router
+const loggerMiddleware = (req, res, next) => {
+  // console.log('logger middleware = ');
+  console.log(`1 Request Method: ${req.method}, Request URL: ${req.url}`);
+  next();
+};
 
-// Router - Level Middleware
-// router.use((req, res, next) => {
-//     console.log('this middleware runs for routes defined by the router.');
-//     // res.send('OK') // harus ada agar client dapat respond kecuali langsung di bypass menggunakan next()
-//     // responds dari middleware function lainnya
-//     // error yang muncul bila suda di bypass tapi pada middleware selanjutnya tidak memunculkan res.send
-//     // -> 404 not found
-//     next()
-// })
-// // router harus di panggil dalam app express
-// // function middleware akan selalu di panggil di tiap Path "/myapp" di port 3000
-// // DONE
-// app.use('/myapp', router);
+const authMiddleware = (req, res, next) => {
+  const token = req.headers['authorization'];
+  const token2 = true;
+  // if (token === 'valid-token') {
+  if (token2) {
+    console.log('2 auth middleware = ');
+    next();
+  } else {
+    console.log(2);
+    res.status(401).send('Unauthorized');
+  }
+};
 
-app.use((req, res, next) => {
-    // middleware function selalu dipanggil di tiap request port 3000 
-    console.log('Time: ', Date.now());
-    next()
-})
-app.use('/user/:id', (req, res, next) => {
-    // middleware function selalu dipanggil di tiap request on "/user/:id" path on port 3000 
-    console.log('Request type = ', req.method);
-    next()
-})
-app.get('/user/:id', (req, res, next) => {
-    res.send("USER")
-})
+// Menggunakan middleware pada router
+router.use(loggerMiddleware);
+router.use(authMiddleware);
 
-app.use('/profile/:id', (req, res, next) => {
-    console.log('Request URL = ', req.originalUrl);
-    next()
-}, (req, res, next) => {
-    console.log('Request Method ', req.method)
-    next()
-    // tidak bisa res.send() -> harus bypass dengan function next
-})
+// Definisikan rute
+router.get('/secure-data', ( req, res) => {
+  res.send('This is secure data.');
+});
 
-// app.get('/profile/:id', (req, res, next) => {
-//     console.log('Request URL2 = ', req.originalUrl);
-//     res.send('DONE')
-// })
+router.get('/public-data', (req, res) => {
+  res.send('This is public data.');
+});
 
-// bisa juga
-app.get('/profile/:id', (req, res, next) => {
-    console.log('Request URL2 = ', req.originalUrl);
-    if(req.params.id == 12) {
-        next('route') // hit next route app -> print `special id = ${req.params.id}`
-    }
-    else {
-        next() // -> callback function "User Info"
-    } 
-}, (req, res) => {
-    res.send("User Info")
-    // app stop -> print User Info
-})
+// Tambahkan router ke aplikasi utama
+// app.use -> API AWALAN UTAMA 
+// API AWALAN = http://localhost:3000/api
+app.use('/api', router); // api awalan + router
+{/*
+  http://localhost:3000/api
+  -> router.use(loggerMiddleware)
+  -> passed -> next()
+  -> router.use(authMiddleware)
+  -> passed -> tapi retun 404 not found karena belum ada return "res.send"
 
-app.get('/profile/:id', (req, res) => {
-    // 
-    res.send(`special id = ${req.params.id}`)
-})
+  API AWALAN + ROUTER
+  http://localhost:3000/api/secure-data
+  -> postman = "This is secure data"
+  http://localhost:3000/api/public-data
+  -> postman = "This is public data"
+  */}
 
-app.listen(port, ()=> {
-    console.log('run on port 3000');
-})
+// Jalankan server
+app.listen(3000, () => {
+  console.log('Server is running on port 3000');
+});
