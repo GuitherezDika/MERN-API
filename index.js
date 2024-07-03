@@ -1,39 +1,23 @@
 const express = require('express');
+const cors = require('cors')
 const app = express();
-const dummy = {
-    book: [
-        { id: 1, title: 'cook' },
-        { id: 2, title: 'chef1' }
-    ]
-};
-app.use(express.json());
 
-app.post('/data', (req, res) => {
-    // res.send(dummy) // cara 1
-    
-    // cara 2
-    const receivedData = req.body;
-    const responseData = {...dummy, ...receivedData};
+// parse data url-encoded
+app.use(cors());
 
-    res.send(responseData)
-    /*
-    {
-        "book": [
-            {
-                "id": 1,
-                "title": "cook"
-            },
-            {
-                "id": 2,
-                "title": "chef1"
-            }
-        ]
-    }
-    */
+app.get('/', (req, res) => {
+    res.send(`Hello World!`)
 })
+app.get('/data', (req, res) => {
+    res.json({ message: `About page` })
+})
+/*
+postman
+{
+    "message": "About page"
+}
+*/
+
 app.listen(3000, () => {
     console.log('server run on port 3000');
 })
-
-// dummy => postman -> {"book":[{"id":1,"title":"cook"},{"id":2,"title":"chef"}]}
-// express.json -> res.send(req.body) -> {}
