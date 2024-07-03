@@ -1,51 +1,39 @@
-// ERROR HANDLING
 const express = require('express');
 const app = express();
-const port = 3000;
-const router = express.Router();
+const dummy = {
+    book: [
+        { id: 1, title: 'cook' },
+        { id: 2, title: 'chef1' }
+    ]
+};
+app.use(express.json());
 
-// router.use((req, res, next) => {
-//     console.log('Time: ', Date.now());
-//     // res.send('OK')
-//     next()
-// })
-// // error handling = 4 parameters 
+app.post('/data', (req, res) => {
+    // res.send(dummy) // cara 1
+    
+    // cara 2
+    const receivedData = req.body;
+    const responseData = {...dummy, ...receivedData};
 
-
-app.use((req, res, next) => {
-    next()
-});
-app.get('/', (req, res)=> {
-    res.send('Hello world!')
-})
-
-// route
-app.get('/error', (req, res, next) => {
-    const err = new Error('Something went wrong!');
-    next(err) // hit middleware error handling
-})
-
-// route async
-app.get('/async-error', async(req, res, next) => {
-    try {
-        // await asyncFunction()
-        res.send('Async function succeeded')
-    } catch (error) {
-        next(error)
+    res.send(responseData)
+    /*
+    {
+        "book": [
+            {
+                "id": 1,
+                "title": "cook"
+            },
+            {
+                "id": 2,
+                "title": "chef1"
+            }
+        ]
     }
+    */
+})
+app.listen(3000, () => {
+    console.log('server run on port 3000');
 })
 
-// middleware error handling 
-app.use((err, req, res, next) => {
-    console.log(1);
-    console.error('-->',err.stack);
-    res.status(500).send('Something broke!')
-})
-
-// handle kesalahan route path PALING AKHIR
-app.use((req, res, next) => {
-    res.status(400).send('Sorry, we could not find that!')
-})
-
-// run server
-app.listen(port, ()=> console.log('run on port 3000'))
+// dummy => postman -> {"book":[{"id":1,"title":"cook"},{"id":2,"title":"chef"}]}
+// express.json -> res.send(req.body) -> {}

@@ -178,7 +178,11 @@
     mount path = ('/user/:id', (req, res) => {})
     unmount path = ((req, res) => {})
 
+    index1.js - index7.js
+    = middleware level
 
+    index8.js - 
+    = built in middleware from express
     
     */
 }
