@@ -19,7 +19,16 @@ app.use((req, res, next) => {
 // harus terakhir sebelum action listen
 app.use('/v1/auth', authRoutes)
 app.use('/v1/blog', blogRoutes)
-
+app.use((err, req, res, next) => {
+    const errorStatus = err.status;
+    const errMessage = err.Error;
+    const data = err.data;
+    
+    res.status(errorStatus).json({
+        message: errMessage,
+        data
+    })
+})
 app.listen(3000, () => {
     console.log('server run on port 3000');
 })

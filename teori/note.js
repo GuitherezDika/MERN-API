@@ -216,5 +216,13 @@
     // CARA 2 - parsed data dengan third party
     // postman -> HANYA BISA body - raw - json
     app.use(bodyParser.json())
+
+    validasi API - error handling
+    EXPRESS - VALIDATOR
+    = middleware express.js
+    = wrap collection api tuk validasi dan bersih oleh validator
+
+    npm install express-validator
+    
     */
 }
