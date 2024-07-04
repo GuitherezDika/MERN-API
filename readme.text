@@ -1,0 +1,49 @@
+Standar API
+
+{root.api}/{version}/{grouping}/endpoint
+example: 
+http://localhost:3000/v1/auth/login
+
+Standar Status response
+200 - OK - Call API Success
+201 - CREATED - Post Success 
+400 - BAD REQUEST - Error on Client Side (Misal salah input)
+401 - UNAUTHORIZED - User not authorized to the REQUEST
+403 - FORBIDDEN - User not allowed to access 
+404 - NOT FOUND - Request endpoint not found
+500 - INTERNAL SERVER ERROR - Error pada server Side
+502 - BAD GATEWAY - Invalid response from another request
+
+GROUP: 
+auth
+[1] - register
+{root.api}/{version}/auth/register
+
+req:
+{
+    "name": "testing",
+    "email": "test@mail.com",
+    "password": "123123"
+}
+
+res:
+{
+    "message": "Register Success",
+    "data": {
+        "id": 1,
+        "name": "testing",
+        "email": "test@mail.com",
+        "password": "123123"
+    }
+}
+
+err-response: 
+
+[2] - login
+
+blog
+[1] - create blog
+[2] - get blogs
+[3] - update blog
+[4] - delete blog
+[5] - pagination
