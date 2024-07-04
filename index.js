@@ -12,6 +12,7 @@ const productRoutes = require('./src/routes/products');
 // app.use(express.urlencoded({ extended: true }))
 
 // CARA 2 - parsed data dengan third party
+// postman -> HANYA BISA body - raw - json
 app.use(bodyParser.json())
 // set header - prevent CORS error
 app.use((req, res, next) => {
