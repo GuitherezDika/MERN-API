@@ -1,28 +1,14 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
+const connectToDatabase = require('./config');
 
 const app = express();
 
-// const mongoURI = 'mongodb://localhost:27017/mern-app-db'
-const url =  'mongodb://localhost:27017/my_mern'
-const options = {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-};
-
-async function connectToDatabase() {
-    try {
-        await mongoose.connect(url, options);
-        console.log('Terhubung ke MongoDB dengan Mongoose');
-    } catch (error) {
-        console.error('Gagal terhubung ke MongoDB', error);
-    }
-}
 connectToDatabase();
 
 const authRoutes = require('./src/routes/auth');
-const blogRoutes = require('./src/routes/blog')
+const blogRoutes = require('./src/routes/blog');
 
 // CARA 1 - parsed data dengan third party
 app.use(bodyParser.json())

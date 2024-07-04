@@ -243,5 +243,8 @@
     collection name = mern-db-reg
     connection uri = mongodb://localhost:27017/
     dari "copy connection string"
+
+    https://medium.com/how-to-react/setup-mern-mongodb-express-js-react-js-and-node-js-environment-and-create-your-first-mern-7774df0fff19
+    
     */
 }

@@ -1,6 +1,7 @@
 const { validationResult } = require('express-validator');
+const User = require('../models/User');
 
-exports.register = (req, res, next) => {
+exports.register = async (req, res, next) => {
     const name = req.body.name;
     const email = req.body.email;
     const password = req.body.password;
@@ -27,6 +28,9 @@ exports.register = (req, res, next) => {
         //     data: null
         // })
     } else {
+        const user = new User({ name, email, password })
+        await user.save();
+
         res.status(201).json(data);
     }
 }
