@@ -47,3 +47,25 @@ blog
 [3] - update blog
 [4] - delete blog
 [5] - pagination
+
+====
+SHARE API DOCUMENTATION POSTMAN
+1. Buat Collection = mern-api2
+2. Api Collection yang udah dibuat -> Workspace Baru
+3. Collection - "mern-api2" klik (...) 
+    - SHARE
+    - Share mern-api2
+    - Via API
+        - Link collection in public Workspace
+        - Copy link
+        - https://elements.getpostman.com/redirect?entityId=9912097-cf439bd7-3f56-4a24-8b0c-caa7db43f391&entityType=collection
+        
+4. Cara 2
+postman - open collection
+pojok kanan atas = Publish 
+arah ke website
+- Publication Settings
+    - Collection Details
+    URL for published documentation
+    https://documenter.getpostman.com/view/9912097/2sA3dxFCVt
+    
