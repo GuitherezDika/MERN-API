@@ -209,5 +209,12 @@
     
     response API req.body = { id: 2, name: 'pen', price: 100 }
 
+    // CARA 1 -> di set agar router bisa akses client data
+    // app.use(express.json())
+    // app.use(express.urlencoded({ extended: true }))
+
+    // CARA 2 - parsed data dengan third party
+    // postman -> HANYA BISA body - raw - json
+    app.use(bodyParser.json())
     */
 }
