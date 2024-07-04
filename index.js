@@ -1,6 +1,15 @@
 const express = require('express');
+const bodyParser = require('body-parser')
+
 const app = express();
 const productRoutes = require('./src/routes/products');
+
+
+// middleware handle parsing form data client
+// extended = true -> diperbolehkan nested object
+// CARA 1 -> di set agar router bisa akses client data
+app.use(express.json())
+app.use(express.urlencoded({ extended: true }))
 
 // set header - prevent CORS error
 app.use((req, res, next) => {

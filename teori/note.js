@@ -184,5 +184,30 @@
     index8.js - 
     = built in middleware from express
     
+    client post data
+    memerlukan middleware saat klient kirim data ke server HTTP POST
+
+    app.use(express.json())
+    = middleware "urlencoded" -> parsing form data client (Optional)
+
+    pada postman kirim data
+    body / x-www-form-urlencoded
+    key id = 3
+    key name = 'book'
+    key price = 2000
+
+    return api req.body = 
+    [Object: null prototype] { id: '3', name: "'book'", price: '2000' }
+
+    bila pengiriman data Postman
+    Body - raw -> json
+    {
+        "id": 2,
+        "name": "pen",
+        "price": 100
+    }
+    
+    response API req.body = { id: 2, name: 'pen', price: 100 }
+
     */
 }
