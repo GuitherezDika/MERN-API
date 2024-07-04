@@ -43,6 +43,31 @@ err-response:
 
 blog
 [1] - create blog
+{root.api}/{version}/blog/create-blog
+
+req :
+{
+    "title":"bottle",
+    "image": "image.png",
+    "body": "Book description"
+}
+
+res:
+{
+    "message": "Create Blog Success.",
+    "data": {
+        "post_id": 1,
+        "title":"bottle",
+        "image": "image.png",
+        "body": "Book description",
+        "created_at": "04/07/2024",
+        "author": {
+            "uid": 1,
+            "name": "Testing"
+        }
+    }
+}
+
 [2] - get blogs
 [3] - update blog
 [4] - delete blog

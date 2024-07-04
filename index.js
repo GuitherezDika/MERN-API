@@ -2,8 +2,8 @@ const express = require('express');
 const bodyParser = require('body-parser')
 
 const app = express();
-const productRoutes = require('./src/routes/products');
 const authRoutes = require('./src/routes/auth');
+const blogRoutes = require('./src/routes/blog')
 
 // CARA 1 - parsed data dengan third party
 app.use(bodyParser.json())
@@ -17,8 +17,8 @@ app.use((req, res, next) => {
 })
 
 // harus terakhir sebelum action listen
-app.use('/v1/customer', productRoutes);
 app.use('/v1/auth', authRoutes)
+app.use('/v1/blog', blogRoutes)
 
 app.listen(3000, () => {
     console.log('server run on port 3000');
