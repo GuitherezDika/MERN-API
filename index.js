@@ -1,7 +1,26 @@
 const express = require('express');
-const bodyParser = require('body-parser')
+const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
 
 const app = express();
+
+// const mongoURI = 'mongodb://localhost:27017/mern-app-db'
+const url =  'mongodb://localhost:27017/my_mern'
+const options = {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+};
+
+async function connectToDatabase() {
+    try {
+        await mongoose.connect(url, options);
+        console.log('Terhubung ke MongoDB dengan Mongoose');
+    } catch (error) {
+        console.error('Gagal terhubung ke MongoDB', error);
+    }
+}
+connectToDatabase();
+
 const authRoutes = require('./src/routes/auth');
 const blogRoutes = require('./src/routes/blog')
 
@@ -23,12 +42,13 @@ app.use((err, req, res, next) => {
     const errorStatus = err.status;
     const errMessage = err.Error;
     const data = err.data;
-    
+
     res.status(errorStatus).json({
         message: errMessage,
         data
     })
 })
+
 app.listen(3000, () => {
     console.log('server run on port 3000');
 })

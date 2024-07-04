@@ -223,6 +223,25 @@
     = wrap collection api tuk validasi dan bersih oleh validator
 
     npm install express-validator
-    
+    done
+
+    INSTALL MONGODB - LOKAL
+    https://www.mongodb.com/docs/manual/tutorial/install-mongodb-on-windows/#std-label-install-mdb-community-windows
+    MongoDB Download Center -> https://www.mongodb.com/try/download/community
+        Pilih -> MongoDB Community Server 
+        -> Download >500mb Version 7.0.12
+        DONE
+
+    Connect Project into MongoDB
+    https://www.w3schools.com/nodejs/nodejs_mongodb.asp
+    https://www.mongodb.com/resources/languages/mongodb-with-nodejs
+
+    NPM + mongoose
+    npm install mongoose
+
+    database name = mern-db
+    collection name = mern-db-reg
+    connection uri = mongodb://localhost:27017/
+    dari "copy connection string"
     */
 }
