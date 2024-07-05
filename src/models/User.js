@@ -6,5 +6,6 @@ const userSchema = new mongoose.Schema({
     password: { type: String, required: true },
 })
 
-const User = mongoose.model('registers', userSchema); // register
+const User = mongoose.model('users', userSchema); 
+// 'users' = nama collection pada database
 module.exports = User;
