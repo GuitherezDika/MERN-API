@@ -217,5 +217,18 @@ const upload = multer({
 
 app.use(upload.single('image'))
 
+===
+mongo db 
+sintax dasar
+1. db.blogspots.find({title: "today11"})
+tuk buat Baru
+"reset"
+2. db.blogspots.find().sort({createdAt: -1})
+"generate"
+"find"
+3. db.blogspots.find().sort({createdAt: -1}).limit(5)
+"generate"
+"find"
+
 
 
