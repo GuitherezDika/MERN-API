@@ -94,3 +94,128 @@ arah ke website
     URL for published documentation
     https://documenter.getpostman.com/view/9912097/2sA3dxFCVt
     
+    referensi NODE + Mongo
+    https://www.bezkoder.com/node-express-mongodb-crud-rest-api/
+
+
+==
+multer = upload image
+multer = will not process any form which is not multipart (multipart/form-data)
+= tidak akan proses form selain multipart/form-data
+npm install --save multer
+multer adds a body object
+basic usage in Html
+<form action="/profile" method="post" enctype="multipart/form-data">
+  <input type="file" name="avatar" />
+</form>
+
+API:
+Key:
+1. fieldname = file yang diupload memiliki object key = fieldname
+2. originalname = nama file asli oleh user. misal file di upload "file.jpg"
+   originalname = "file.jpg"
+3. encoding = object properti dari file yang diupload oleh user
+    -> 7bit, 8bit, or binary
+4. mimetype = Multipurpose Internet Mail Extensions
+    = jenis kontent file yang sedang di handle (kirim/terima)
+    Mime = "type/subtype"
+    'text/plain'
+    'text/html'
+    'text/css'
+    'text/javascript'
+    'image/jpeg'
+    'image/png'
+    'image/gif'
+    'image/svg+xml'
+    'audio/mpeg'
+    'audio/wav'
+    'audio/ogg'
+    'video/mp4'
+    'video/ogg'
+    'application/json'
+    'application/xml'
+    'application/pdf'
+    'application/zip'
+5. size = ukuran file
+6. destination = lokasi penyimpanan file pada server
+    destination (req, file, cb) => cb untuk penympanan di server
+7. filename = nama unik penyimpanan file di server
+    file.fieldname+'-'+ Date.now() + path.extname(file.originalname)
+    filename: (req, file, cb) => cb(null, )
+8. path = full path to upload file
+9. buffer = .... 
+10. limits
+multer({
+    limits: {
+        fieldNameSize,
+        fieldSize,
+        fields,
+        fileSize,
+        files,
+        parts,
+        headerPairs
+    }
+})
+
+index.js
+
+// upload image
+
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(
+            null, // null = success
+            'images'// direktori simpan file pada server
+        )
+    },
+    filename: function (req, file, cb) {
+        console.log('file --- ', file);
+        /*
+        {
+            fieldname: 'image',
+            originalname: 'Screenshot 2024-07-09 105311.png',
+            encoding: '7bit',
+            mimetype: 'image/png'
+        }
+        */
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        // 1E9 = 1 miliar => 0.12345 * 1 miliar = 123450000
+        cb(null, file.originalname + '-' + uniqueSuffix)
+    },
+})
+
+const fileFilter = (req, file, cb) => {
+    if (file.mimetype === 'image/jpeg' || file.mimetype == 'image/jpg' || file.mimetype == 'image/png') {
+        cb(null, true)
+    } else {
+        cb(null, false)
+    }
+}
+const upload = multer({
+    storage,
+    fileFilter,
+    limits: {
+        fieldNameSize: 100, // 100 karakter
+        fileSize: 1024 * 1024 * 5, // 5 Mb
+        files: 4, // jumlah file upload = 4
+        fields: 4, // jumlah field ikutaan maksimal 4 (misal name, email, phone, color)
+        parts: 5, // form data multipart yang di upload harus kurang dari 5 form
+        // hingga saat sukses upload, dapat lihat log req => req.body, req.fileSize, req.name, req.date,
+        /*
+        form-data: 
+        {
+        title,
+        body,
+        image,
+        name
+        }
+        */
+        headerPairs: 4, // max number of header key -> jumlah pasangan header yang diterima dari permintaan HTTP saat mengunggah file menggunakan form-data multipart
+    }
+})
+
+
+app.use(upload.single('image'))
+
+
+
