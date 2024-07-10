@@ -127,3 +127,21 @@ exports.updateBlog = async (req, res, next) => {
         next(err)
     }
 }
+
+exports.deleteOneBlog = async (req, res, next) => {
+    try {
+        const { _id } = req.params;
+        const data = await BlogData.deleteOne({ _id });
+        if (data.deletedCount == 1) {
+            res.status(200).json({
+                message: 'Delete Blog success'
+            })
+        }
+    } catch (error) {
+        const err = new Error(error.errorResponse?.errmsg || error?.reason)
+        err.status = 400;
+        err.data = [];
+
+        next(err)
+    }
+}

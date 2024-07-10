@@ -3,7 +3,7 @@ const router = express.Router();
 const { body } = require('express-validator');
 
 const createBlogController = require('../controller/blog');
-const { createBlog, getAllBlog, getOneBlog, updateBlog } = createBlogController;
+const { createBlog, getAllBlog, getOneBlog, updateBlog, deleteOneBlog } = createBlogController;
 
 router.post(
     '/create-blog',
@@ -25,6 +25,7 @@ router.patch(
     ],
     updateBlog
 )
+router.delete('/delete-blog/:_id', deleteOneBlog)
 
 
 module.exports = router;
