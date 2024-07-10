@@ -3,7 +3,7 @@ const router = express.Router();
 const { body } = require('express-validator');
 
 const createBlogController = require('../controller/blog');
-const { createBlog } = createBlogController;
+const { createBlog, getAllBlog } = createBlogController;
 
 router.post(
     '/create-blog',
@@ -13,5 +13,7 @@ router.post(
     ],
     createBlog
 );
+
+router.get('/get-blogs', getAllBlog)
 
 module.exports = router;

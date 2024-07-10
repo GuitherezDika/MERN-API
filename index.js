@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const connectToDatabase = require('./config');
 const multer = require('multer');
+const path = require('path');
 
 const app = express();
 
@@ -45,8 +46,9 @@ const upload = multer({
     }
 })
 
-
 app.use(upload.single('image'))
+app.use('/images', express.static(path.join(__dirname, 'images')));
+
 // CARA 1 - parsed data dengan third party
 app.use(bodyParser.json())
 
@@ -61,15 +63,28 @@ app.use((req, res, next) => {
 // harus terakhir sebelum action listen
 app.use('/v1/auth', authRoutes)
 app.use('/v1/blog', blogRoutes)
+
+// handle global error from all routes
 app.use((err, req, res, next) => {
     const errorStatus = err.status || 400;
     const errMessage = err.message || 'invalid';
     const data = err.data || [];
 
-    res.status(errorStatus).json({
-        message: errMessage,
-        data
-    })
+    if (err instanceof multer.MulterError) {
+        switch (err.code) {
+            case 'LIMIT_UNEXPECTED_FILE':
+                return res.status(400).json({ message: 'Unexpected file number, maximum number of file is one.', data: [] });
+            case 'LIMIT_PART_COUNT':
+                return res.status(400).json({ message: err.message, data: [] });
+            default:
+                return res.status(400).json({ message: err.message, data: [] })
+        }
+    } else {
+        res.status(errorStatus).json({
+            message: errMessage,
+            data
+        })
+    }
 })
 
 app.listen(3000, () => {

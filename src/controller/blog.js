@@ -46,3 +46,19 @@ exports.createBlog = async (req, res, next) => {
         next(err)
     }
 }
+
+exports.getAllBlog = async (req, res, next) => {
+    try {
+        const data = await BlogData.find();
+        res.status(200).json({
+            message: 'Get All Blog Data success',
+            data
+        })
+    } catch (error) {
+        const err = new Error(error.errorResponse.errmsg)
+        err.status = 400;
+        err.data = [];
+
+        next(err)
+    }
+}
