@@ -62,3 +62,68 @@ exports.getAllBlog = async (req, res, next) => {
         next(err)
     }
 }
+
+exports.getOneBlog = async (req, res, next) => {
+    try {
+        const { _id } = req.params;
+        const data = await BlogData.findOne({ _id });
+        res.status(200).json({
+            message: 'Get Blog Data success',
+            data
+        })
+    } catch (error) {
+        const err = new Error(error.errorResponse?.errmsg || error?.reason)
+        err.status = 400;
+        err.data = [];
+
+        next(err)
+    }
+}
+
+exports.updateBlog = async (req, res, next) => {
+    try {
+        const { errors } = validationResult(req);
+
+        if (errors.length > 0) {
+            let err = new Error('invalid input blog');
+            err.status = 400;
+            err.data = errors;
+            return next(err);
+        }
+
+        if (!req.file) {
+            let err = new Error('Image harus di upload!');
+            err.status = 422;
+            err.data = errors;
+            return next(err);
+        }
+
+        const { title, body, name } = req.body;
+        const image = req.file.path;
+
+        const { _id } = req.params;
+        const filter = { _id }
+
+        const updatedBlog = {
+            title,
+            body,
+            image,
+            author: {
+                uid: 1,
+                name
+            }
+        }
+        const data = await BlogData.findByIdAndUpdate(filter, updatedBlog, { new: true });
+
+        res.status(200).json({
+            message: 'Update Blog Data success',
+            data
+        })
+    } catch (error) {
+        const err = new Error(error.errorResponse?.errmsg || error?.reason)
+        err.status = 400;
+        err.data = [];
+
+        next(err)
+    }
+}
