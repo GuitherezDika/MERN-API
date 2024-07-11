@@ -152,3 +152,42 @@ exports.deleteOneBlog = async (req, res, next) => {
         next(err)
     }
 }
+
+exports.getDataByPagination = async (req, res, next) => {
+    try {
+        console.log(1111, req.query);
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 5;
+        const skip = (page - 1) * limit;
+        const blogs = await BlogData.find().sort({ createdAt: -1 }).skip(skip).limit(limit);
+        {/*
+            find() = all data retrieved
+            sort({createdAt: -1}) = list data dari yang terbaru
+            skip = 0 ->> nampilin semua data
+            skip = 0 && limit = 5 --> nampilin hanya data 5
+            {today20, today19, today18, today17, today16}
+            page = 2 && skip = 5 && limit = 5
+            {today15, today14, today13, today12, today11}
+            page = 3 && skip = 10 && limit = 5
+        */}
+        const totalBlogs = await BlogData.countDocuments(); // total data = 10;
+        const totalPages = Math.ceil(totalBlogs / limit); // 2
+        res.status(200).json({
+            message: 'OK Blog success',
+            data: {
+                page, 
+                limit, 
+                totalBlogs, 
+                totalPages, 
+                blogs
+            }
+        })
+    } catch (error) {
+        console.log('Pagination error = ', error);
+        const err = new Error('Pagination not set!')
+        err.status = 400;
+        err.data = [];
+
+        next(err)
+    }
+}

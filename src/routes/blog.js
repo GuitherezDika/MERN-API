@@ -3,7 +3,7 @@ const router = express.Router();
 const { body } = require('express-validator');
 
 const createBlogController = require('../controller/blog');
-const { createBlog, getAllBlog, getOneBlog, updateBlog, deleteOneBlog } = createBlogController;
+const { createBlog, getAllBlog, getOneBlog, updateBlog, deleteOneBlog, getDataByPagination } = createBlogController;
 
 router.post(
     '/create-blog',
@@ -26,6 +26,7 @@ router.patch(
     updateBlog
 )
 router.delete('/delete-blog/:_id', deleteOneBlog)
-
+router.get('/pagination', getDataByPagination);// perlu query parameter page dan limit
+// http://localhost:3000/v1/blog/pagination?page=3&limit=4
 
 module.exports = router;
