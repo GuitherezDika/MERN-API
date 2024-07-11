@@ -155,7 +155,6 @@ exports.deleteOneBlog = async (req, res, next) => {
 
 exports.getDataByPagination = async (req, res, next) => {
     try {
-        console.log(1111, req.query);
         const page = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit) || 5;
         const skip = (page - 1) * limit;
@@ -183,7 +182,6 @@ exports.getDataByPagination = async (req, res, next) => {
             }
         })
     } catch (error) {
-        console.log('Pagination error = ', error);
         const err = new Error('Pagination not set!')
         err.status = 400;
         err.data = [];
