@@ -22,7 +22,7 @@ const storage = multer.diskStorage({
     filename: function (req, file, cb) {
         const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
         // 1E9 = 1 miliar => 0.12345 * 1 miliar = 123450000
-        cb(null, file.originalname + '-' + uniqueSuffix)
+        cb(null, uniqueSuffix+'-'+ file.originalname)
     },
 })
 

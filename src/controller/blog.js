@@ -1,6 +1,7 @@
 const { validationResult } = require('express-validator')
-// const BlogPost = require('../models/blog');
 const BlogData = require('../models/blog');
+const path = require('path');
+const fs = require('fs');
 
 exports.createBlog = async (req, res, next) => {
 
@@ -131,14 +132,20 @@ exports.updateBlog = async (req, res, next) => {
 exports.deleteOneBlog = async (req, res, next) => {
     try {
         const { _id } = req.params;
-        const data = await BlogData.deleteOne({ _id });
-        if (data.deletedCount == 1) {
+        const blog = await BlogData.findById(_id);
+        const imagePath = path.join(__dirname, '../../' + blog.image)
+
+        // fs.unlink(path, callback)
+        fs.unlink(imagePath, async () => {
+            // success delete image, then 
+            // delete data in database
+            await BlogData.findByIdAndDelete(_id);
             res.status(200).json({
                 message: 'Delete Blog success'
             })
-        }
+        })
     } catch (error) {
-        const err = new Error(error.errorResponse?.errmsg || error?.reason)
+        const err = new Error('Blog not found!')
         err.status = 400;
         err.data = [];
 

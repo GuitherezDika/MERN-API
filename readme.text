@@ -230,5 +230,31 @@ tuk buat Baru
 "generate"
 "find"
 
+=
+https://mongoosejs.com/docs/queries.html
+=
+DELETE DATA + FILE cooooool
 
+exports.deleteOneBlog = async (req, res, next) => {
+    try {
+        const { _id } = req.params;
+        const blog = await BlogData.findById(_id);
+        const imagePath = path.join(__dirname, '../../' + blog.image)
 
+        // fs.unlink(path, callback)
+        fs.unlink(imagePath, async () => {
+            // success delete image, then 
+            // delete data in database
+            await BlogData.findByIdAndDelete(_id);
+            res.status(200).json({
+                message: 'Delete Blog success'
+            })
+        })
+    } catch (error) {
+        const err = new Error('Blog not found!')
+        err.status = 400;
+        err.data = [];
+
+        next(err)
+    }
+}
