@@ -4,7 +4,7 @@ const { body } = require('express-validator')
 const router = express.Router();
 
 const authController = require('../controller/auth');
-const { register } = authController;
+const { register, login } = authController;
 
 router.post(
     '/register',
@@ -14,5 +14,13 @@ router.post(
         body('password').isLength({ min: 6 }).withMessage('Minimum length is 6 chars')
     ],
     register
+)
+router.post(
+    '/login',
+    [
+        body('name').isLength({ min: 6 }).withMessage('Minimum length is 6 chars'),
+        body('password').isLength({ min: 6 }).withMessage('Minimum length is 6 chars')
+    ],
+    login 
 )
 module.exports = router;
