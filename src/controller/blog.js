@@ -11,14 +11,14 @@ exports.createBlog = async (req, res, next) => {
         let err = new Error('invalid input blog');
         err.status = 400;
         err.data = errors;
-        return next(err);
+        next(err);
     }
 
     if (!req.file) { // uploaded file
         let err = new Error('Image harus di upload!');
         err.status = 422;
         err.data = errors;
-        return next(err);
+        next(err);
     }
 
     const { title, body, name } = req.body;
@@ -89,14 +89,14 @@ exports.updateBlog = async (req, res, next) => {
             let err = new Error('invalid input blog');
             err.status = 400;
             err.data = errors;
-            return next(err);
+            next(err);
         }
 
         if (!req.file) {
             let err = new Error('Image harus di upload!');
             err.status = 422;
             err.data = errors;
-            return next(err);
+            next(err);
         }
 
         const { title, body, name } = req.body;
