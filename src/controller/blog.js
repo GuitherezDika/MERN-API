@@ -1,7 +1,7 @@
 const { validationResult } = require('express-validator')
 const BlogData = require('../models/blog');
 const path = require('path');
-const fs = require('fs');
+const fs = require('fs'); // fs = file system
 
 exports.createBlog = async (req, res, next) => {
 

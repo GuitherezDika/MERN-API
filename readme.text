@@ -258,3 +258,126 @@ exports.deleteOneBlog = async (req, res, next) => {
         next(err)
     }
 }
+
+// -----
+// Login
+app.post('/login', async (req, res) => {
+    const { username, password } = req.body;
+
+    try {
+        const user = await User.findOne({ username });
+        if (!user) return res.status(400).send('User not found');
+
+        const isPasswordValid = await bcrypt.compare(password, user.password);
+        if (!isPasswordValid) return res.status(400).send('Invalid password');
+
+        const token = jwt.sign({ userId: user._id }, 'SECRET_KEY', { expiresIn: '1h' });
+        res.status(200).json({ token });
+    } catch (err) {
+        res.status(500).send('Error logging in');
+    }
+});
+
+// Middleware untuk verifikasi token
+const authMiddleware = (req, res, next) => {
+    const token = req.header('Authorization').replace('Bearer ', '');
+    if (!token) return res.status(401).send('Access denied');
+
+    try {
+        const verified = jwt.verify(token, 'SECRET_KEY');
+        req.user = verified;
+        next();
+    } catch (err) {
+        res.status(400).send('Invalid token');
+    }
+};
+
+// Route yang dilindungi
+app.get('/protected', authMiddleware, (req, res) => {
+    res.status(200).send('You have access to this protected route');
+});
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+});
+
+=====
+TOKEN
+var token = jwt.sign({ userId: user.data?._id }, process.env.SECRET_KEY, { algorithm: 'RS256', expiresIn: '1h' });
+//  jwt.sign({ userId: user.data?._id }, process.env.SECRET_KEY); = keamanan rendah
+// eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3MjA3NTQzODB9.4BwedhQAOdL3lflo1KGU8DUsT1EM-6r_Bl9qu4NOwSc
+
+jwt.sign({ userId: user.data?._id }, process.env.SECRET_KEY, { algorithm: 'RS256', expiresIn: '1h' });
+Keamanan Tinggi -> menggunakan RSA
+
+Penggunaan RSA untuk JWT
+# Buat kunci privat
+openssl genpkey -algorithm RSA -out privateKey.pem -pkeyopt rsa_keygen_bits:2048
+
+# Ekstrak kunci publik dari kunci privat
+openssl rsa -pubout -in privateKey.pem -out publicKey.pem
+
+OpenSSL is an open source library that provides encryption, decryption, and other security functions to protect data.
+encrypt emails, protect the website, and secure the internet connections
+= encrypt data
+= SSL certificates
+
+download & install :
+choco install openssl
+
+
+https://dev.to/devland/how-to-generate-and-use-an-ssl-certificate-in-nodejs-2996
+
+SSL = Secure Socket Layer
+
+To generate the SSL Certificate we need to follow these steps as shown below:
+
+Generate a Private Key
+Create a CSR ( certificate signing request) using the private key.
+Generate the SSL certification from CSR
+Integrate SSL Certificate in Express
+
+1. generate a private key
+= to access a full-featured toolkit for:
+    = Transport Layer Security (TLS)
+    = Secure Sockets Layer (SSL)
+run: 
+openssl genrsa -out key.pem
+private key stored in "key.pem" == CREATED
+OK
+
+2. create a CSR (Certificate Signing Request)
+run: 
+openssl req -new -key key.pem -out csr.pem
+= generate CSR in scr.pem
+country name = id
+state or province = jakarta
+locality name (city) = jakarta
+organization name = mern
+organization unit = mern
+common name (or your name) = dika
+email address = guitherez.gitW@gmail.com
+a challange password = 12345678
+an optional company name = wcs == CREATED
+OK
+
+3. Generate the SSL Certificate
+generate SSL Certificate use key.pem & csr.pem;
+= openssl x509 -req -days 365 -in csr.pem -signkey key.pem -out cert.pem
+x509 = standard defining the format of the public-key certificate;
+365 = validity of the certificate as 365 days;
+cert.pem = CREATED
+OK 
+
+4. Integrate the SSL Certificate in Express
+const options = {
+    key: fs.readFileSync(path.join(__dirname, './key.pem')),
+    cert: fs.readFileSync(path.join(__dirname, './cert.pem'))
+}
+
+token awal 
+var token = jwt.sign({ userId: user.data?._id }, options.key, { algorithm: 'RS256', expiresIn: '1h' });
+= 'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3MjA3NzE3NDQsImV4cCI6MTcyMDc3NTM0NH0.Qcxq34H_Mabz1OVXiKpM_GhKOT868mWoyG_b1sUStXqOPiCV3wkNpMZT_1MH0VVB01cbd7KN1W6frTrk7Mr2pZXXUBRfbcinrDBbUcUcs9Bq7ItaLHmfE2q10zgq5_c_48dk-IB_EHbTwkievKHh1wxM9zlyyPL6AhJBt_fTEdandmmDb6SLNDnkvknLs5jJiy9kdlxxxze0_x6K-TDidC5gz2Fx24CNytmnTEHoWXqoPmFy3Sho2lXt6Jp_0PuYfwicVWmUwIO0xfWFkD5_BmRPtot9dq1SwEDsR8AYewsqzXIp-4OrFNXrL5iNbVs8rRJCU1_7agF0ujtEHoLIXA'
+DONE 
+res.status(201).json({token})
