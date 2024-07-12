@@ -13,6 +13,9 @@ const handleError = (message, status, data = []) => {
     return err;
 }
 
+const privateKey = fs.readFileSync(path.join(__dirname, '../../key.pem'));
+const publicCert = fs.readFileSync(path.join(__dirname, '../../cert.pem'));
+
 exports.register = async (req, res, next) => {
     const { name, email, password } = req.body;
     const { errors } = validationResult(req);
@@ -41,7 +44,6 @@ exports.register = async (req, res, next) => {
 }
 
 // PROSES TOKEN
-const privateKey = fs.readFileSync(path.join(__dirname, '../../key.pem'));
 
 exports.login = async (req, res, next) => {
     const { name, password } = req.body;
@@ -60,8 +62,22 @@ exports.login = async (req, res, next) => {
         res.status(201).json({ token })
 
     } catch (error) {
-        console.log(error);
         const msg = error.errorResponse?.errmsg || 'Authentication Failed';
         next(handleError(msg, 400))
     }
+}
+
+// middleware to verify token
+exports.verifyToken = async (req, res, next) => {
+    const token = req.headers['authorization'].split(' ')[1];
+    if (!token) {
+        return next(handleError('No token provided', 403))
+    };
+    jwt.verify(token, publicCert, { algorithms: ['RS256'] }, (err, decoded) => {
+        if (err) {
+            return next(handleError('Failed to authenticate token', 403))
+        }
+        req.userId = decoded.userId;
+        next();
+    })
 }

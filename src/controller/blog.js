@@ -3,22 +3,22 @@ const BlogData = require('../models/blog');
 const path = require('path');
 const fs = require('fs'); // fs = file system
 
-exports.createBlog = async (req, res, next) => {
+const handleError = (message, status, data = []) => {
+    const err = new Error(message);
+    err.status = status;
+    err.data = data;
+    return err;
+}
 
+exports.createBlog = async (req, res, next) => {
     const { errors } = validationResult(req);
 
     if (errors.length > 0) {
-        let err = new Error('invalid input blog');
-        err.status = 400;
-        err.data = errors;
-        next(err);
+        return next(handleError('Invalid input blog', 400))
     }
 
     if (!req.file) { // uploaded file
-        let err = new Error('Image harus di upload!');
-        err.status = 422;
-        err.data = errors;
-        next(err);
+        return next(handleError('Image is required', 422, errors))
     }
 
     const { title, body, name } = req.body;
@@ -40,11 +40,7 @@ exports.createBlog = async (req, res, next) => {
             data
         })
     } catch (error) {
-        const err = new Error(error.errorResponse.errmsg)
-        err.status = 400;
-        err.data = [];
-
-        next(err)
+        return next(handleError(error.errorResponse.errmsg, 400))
     }
 }
 
@@ -56,11 +52,7 @@ exports.getAllBlog = async (req, res, next) => {
             data
         })
     } catch (error) {
-        const err = new Error(error.errorResponse.errmsg)
-        err.status = 400;
-        err.data = [];
-
-        next(err)
+        return next(handleError(error.errorResponse.errmsg, 400))
     }
 }
 
@@ -73,11 +65,8 @@ exports.getOneBlog = async (req, res, next) => {
             data
         })
     } catch (error) {
-        const err = new Error(error.errorResponse?.errmsg || error?.reason)
-        err.status = 400;
-        err.data = [];
-
-        next(err)
+        const err = error.errorResponse?.errmsg || error?.reason;
+        return next(handleError(err, 400))
     }
 }
 
@@ -86,17 +75,11 @@ exports.updateBlog = async (req, res, next) => {
         const { errors } = validationResult(req);
 
         if (errors.length > 0) {
-            let err = new Error('invalid input blog');
-            err.status = 400;
-            err.data = errors;
-            next(err);
+            return next(handleError('Invalid input blog', 400))
         }
 
         if (!req.file) {
-            let err = new Error('Image harus di upload!');
-            err.status = 422;
-            err.data = errors;
-            next(err);
+            return next(handleError('Image is required', 422, errors))
         }
 
         const { title, body, name } = req.body;
@@ -121,11 +104,8 @@ exports.updateBlog = async (req, res, next) => {
             data
         })
     } catch (error) {
-        const err = new Error(error.errorResponse?.errmsg || error?.reason)
-        err.status = 400;
-        err.data = [];
-
-        next(err)
+        const message = error.errorResponse?.errmsg || error?.reason;
+        return next(handleError(message, 400))
     }
 }
 
@@ -145,11 +125,7 @@ exports.deleteOneBlog = async (req, res, next) => {
             })
         })
     } catch (error) {
-        const err = new Error('Blog not found!')
-        err.status = 400;
-        err.data = [];
-
-        next(err)
+        return next(handleError('Blog not found', 400))
     }
 }
 
@@ -174,18 +150,14 @@ exports.getDataByPagination = async (req, res, next) => {
         res.status(200).json({
             message: 'OK Blog success',
             data: {
-                page, 
-                limit, 
-                totalBlogs, 
-                totalPages, 
+                page,
+                limit,
+                totalBlogs,
+                totalPages,
                 blogs
             }
         })
     } catch (error) {
-        const err = new Error('Pagination not set!')
-        err.status = 400;
-        err.data = [];
-
-        next(err)
+        return next(handleError('Pagination not set!', 400))
     }
 }

@@ -381,3 +381,34 @@ var token = jwt.sign({ userId: user.data?._id }, options.key, { algorithm: 'RS25
 = 'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3MjA3NzE3NDQsImV4cCI6MTcyMDc3NTM0NH0.Qcxq34H_Mabz1OVXiKpM_GhKOT868mWoyG_b1sUStXqOPiCV3wkNpMZT_1MH0VVB01cbd7KN1W6frTrk7Mr2pZXXUBRfbcinrDBbUcUcs9Bq7ItaLHmfE2q10zgq5_c_48dk-IB_EHbTwkievKHh1wxM9zlyyPL6AhJBt_fTEdandmmDb6SLNDnkvknLs5jJiy9kdlxxxze0_x6K-TDidC5gz2Fx24CNytmnTEHoWXqoPmFy3Sho2lXt6Jp_0PuYfwicVWmUwIO0xfWFkD5_BmRPtot9dq1SwEDsR8AYewsqzXIp-4OrFNXrL5iNbVs8rRJCU1_7agF0ujtEHoLIXA'
 DONE 
 res.status(201).json({token})
+
+CREATE VERIFY TOKEN
+exports.verifyToken = async (req, res, next) => {
+    const token = req.headers['authorization'].split(' ')[1];
+    // POSTMAN Headers/Authorization = "Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9......."
+    // HARUS SPLIT get original token;
+    if (!token) {
+        return next(handleError('No token provided', 403))
+    };
+    jwt.verify(token, publicCert, { algorithms: ['RS256'] }, (err, decoded) => {
+        if (err) {
+            return next(handleError('Failed to authenticate token', 403))
+        }
+        req.userId = decoded.userId;
+        next();
+    })
+}
+
+contoh route
+router.delete('/delete-blog/:_id', verifyToken, deleteOneBlog)
+
+POSTMAN
+deleteBlog 
+    Authorization
+        Auth Type = Bearer Token
+        = eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3MjA3NzE3NDQsImV4cCI6MTcyMDc3NTM0NH0.Qcxq34H_Mabz1OVXiKpM_GhKOT868mWoyG_b1sUStXqOPiCV3wkNpMZT_1MH0VVB01cbd7KN1W6frTrk7Mr2pZXXUBRfbcinrDBbUcUcs9Bq7ItaLHmfE2q10zgq5_c_48dk-IB_EHbTwkievKHh1wxM9zlyyPL6AhJBt_fTEdandmmDb6SLNDnkvknLs5jJiy9kdlxxxze0_x6K-TDidC5gz2Fx24CNytmnTEHoWXqoPmFy3Sho2lXt6Jp_0PuYfwicVWmUwIO0xfWFkD5_BmRPtot9dq1SwEDsR8AYewsqzXIp-4OrFNXrL5iNbVs8rRJCU1_7agF0ujtEHoLIXA
+    headers
+        Authorization = .............
+    OK
+HIT API = OK
+
