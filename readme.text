@@ -427,3 +427,14 @@ Menambahkan logging untuk aktivitas login dan verifikasi token, sehingga Anda da
 Error Handling yang Lebih Baik:
 Menyempurnakan penanganan kesalahan untuk memberikan respon yang lebih informatif dan sesuai untuk klien.
 
+======
+
+Ringkasan Prioritas:
+API LOGOUT
+API HAPUS AKUN
+Publish API Public
+WebSocket di React Native
+Membuat Notifikasi Android
+Publish App
+
+=====

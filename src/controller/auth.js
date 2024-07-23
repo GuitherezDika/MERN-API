@@ -16,7 +16,7 @@ const handleError = (message, status, data = []) => {
 const privateKey = fs.readFileSync(process.env.PRIVATE_KEY_PATH);
 const publicCert = fs.readFileSync(process.env.PUBLIC_KEY_PATH);
 const generateAccessToken = user => {
-    return jwt.sign({ userId: user._id, name: user.name }, privateKey, { algorithm: 'RS256', expiresIn: process.env.REFRESH_TOKEN_LIFE })
+    return jwt.sign({ userId: user._id, name: user.name }, privateKey, { algorithm: 'RS256', expiresIn: process.env.ACCESS_TOKEN_LIFE })
 }
 
 const generateRefreshToken = user => {
@@ -69,7 +69,6 @@ exports.login = async (req, res, next) => {
         // httpOnly = true -> cookie hanya dapat diakses oleh server 
         // dan tidak dapat diakses / modifikasi oleh JS yang jalan di browser
         res.status(201).json({ accessToken })
-
     } catch (error) {
         const msg = error.message || 'Authentication Failed';
         next(handleError(msg, 400))
@@ -79,13 +78,12 @@ exports.login = async (req, res, next) => {
 // middleware to verify token
 exports.verifyToken = async (req, res, next) => {
     const token = req.rawHeaders[1]?.split(' ')[1];
-    // const token = req.rawHeaders[19]?.split('=')[1];
     if (!token) {
         return next(handleError('No token provided', 403))
     };
     jwt.verify(token, publicCert, { algorithms: ['RS256'] }, async (err, decoded) => {
         if (err && err.name == 'TokenExpiredError') {
-            return await postToken(req, res, next)
+            return await handleRefreshToken(req, res, next)
         } else if (err) {
             return next(handleError('Fail to authenticate token', 403))
         }
@@ -96,22 +94,22 @@ exports.verifyToken = async (req, res, next) => {
 }
 
 // dipanggil ketika verifyToken udah kadaluarsa
-const postToken = async (req, res, next) => {
-    const { name } = req.body;
-    const refreshToken = req.headers['authorization']?.split(' ')[1].split(' ')[0];
-
+const handleRefreshToken = async (req, res, next) => {
+    const refreshToken = req.headers.cookie?.split('=')[1] || req.headers['authorization']?.split(' ')[1].split(' ')[0];
     if (!refreshToken) return next(handleError('No token provided', 403));
-    try {
 
-        jwt.verify(refreshToken, publicCert, { algorithms: ['RS256'] }, async (err, decoded) => {
+    try {
+        const userLoggedin = jwt.decode(refreshToken);
+        
+        jwt.verify(refreshToken, publicCert, { algorithms: ['RS256'] }, async err => {
             if (err) {
-                const user = await User.findOne({ name: 'nalsalOK' });// 'nalsalOK adalah nama user saat login
+                const user = await User.findOne({ name: userLoggedin.name });
                 if (!user) return next(handleError('User not found', 400));
 
-                const accessToken = generateAccessToken(user);
                 const newRefreshToken = generateRefreshToken(user);
                 res.cookie('refreshToken', newRefreshToken, { httpOnly: true });
-                return res.status(201).json({ accessToken });
+                const newAccessToken = generateAccessToken(user);
+                res.status(201).json({ accessToken: newAccessToken });
             }
             return next()
         })

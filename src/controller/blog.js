@@ -40,7 +40,8 @@ exports.createBlog = async (req, res, next) => {
             data
         })
     } catch (error) {
-        return next(handleError(error.errorResponse.errmsg, 400))
+        const msg = error.message || 'Failed to create blog data';
+        return next(handleError(msg, 400))
     }
 }
 
@@ -52,7 +53,8 @@ exports.getAllBlog = async (req, res, next) => {
             data
         })
     } catch (error) {
-        return next(handleError(error.errorResponse.errmsg, 400))
+        const msg = error.message || 'Failed to get data';
+        return next(handleError(msg, 400))
     }
 }
 
