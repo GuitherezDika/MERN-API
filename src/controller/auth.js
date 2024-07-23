@@ -6,6 +6,8 @@ const jwt = require('jsonwebtoken')
 const fs = require('fs');
 const path = require('path');
 
+let tokenStore = new Set();
+
 const handleError = (message, status, data = []) => {
     const err = new Error(message);
     err.status = status;
@@ -100,7 +102,7 @@ const handleRefreshToken = async (req, res, next) => {
 
     try {
         const userLoggedin = jwt.decode(refreshToken);
-        
+
         jwt.verify(refreshToken, publicCert, { algorithms: ['RS256'] }, async err => {
             if (err) {
                 const user = await User.findOne({ name: userLoggedin.name });
@@ -117,4 +119,21 @@ const handleRefreshToken = async (req, res, next) => {
         const msg = error.message || 'Failed to process token';
         return next(handleError(msg, 400));
     }
+}
+
+exports.authenticateToken = (req, res, next) => {
+    const token = req.headers['authorization']?.split(' ')[1];
+    if (token == null) return res.sendStatus(401);
+
+    jwt.verify(token, publicCert, (err, user) => {
+        if (err) return res.sendStatus(403);
+        req.user = user;
+        next()
+    })
+}
+
+exports.logout = ( req, res) =>  {
+    const token = req.headers['authorization']?.split(' ')[1];
+    tokenStore.delete(token);
+    res.sendStatus(204)
 }

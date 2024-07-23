@@ -4,7 +4,7 @@ const { body } = require('express-validator')
 const router = express.Router();
 
 const authController = require('../controller/auth');
-const { register, login } = authController;
+const { register, login, logout, authenticateToken } = authController;
 
 router.post(
     '/register',
@@ -23,4 +23,5 @@ router.post(
     ],
     login 
 )
+router.post('/logout', [], authenticateToken, logout)
 module.exports = router;
