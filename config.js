@@ -6,7 +6,7 @@ const options = { useNewUrlParser: true };
 async function connectToDatabase() {
     try {
         const con = await mongoose.connect(url);
-        console.log('MongoDB connected & success create database & collection ----->>>>', con.connection.models);
+        console.log(' ----->> MongoDB connected', con.connection.models);
         // con.connection.collections
     } catch (error) {
         console.error('Gagal terhubung ke MongoDB', error);

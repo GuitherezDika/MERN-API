@@ -412,3 +412,18 @@ deleteBlog
     OK
 HIT API = OK
 
+========
+Berikut adalah beberapa hal yang dapat Anda pertimbangkan untuk meningkatkan keamanan dan kegunaan lebih lanjut:
+
+Perbarui Token (Token Refresh):
+Implementasi sistem refresh token untuk memperbarui token yang mendekati waktu kedaluwarsa tanpa memaksa pengguna untuk login ulang.
+
+Role-based Access Control (RBAC):
+Menambahkan kontrol akses berbasis peran untuk memastikan bahwa hanya pengguna dengan peran yang sesuai yang dapat mengakses endpoint tertentu.
+
+Log Aktivitas:
+Menambahkan logging untuk aktivitas login dan verifikasi token, sehingga Anda dapat melacak upaya akses yang mencurigakan.
+
+Error Handling yang Lebih Baik:
+Menyempurnakan penanganan kesalahan untuk memberikan respon yang lebih informatif dan sesuai untuk klien.
+

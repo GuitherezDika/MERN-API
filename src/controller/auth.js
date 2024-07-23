@@ -4,7 +4,7 @@ const bcrypt = require('bcrypt');
 const env = require('dotenv').config();
 const jwt = require('jsonwebtoken')
 const fs = require('fs');
-const path = require('path')
+const path = require('path');
 
 const handleError = (message, status, data = []) => {
     const err = new Error(message);
@@ -13,8 +13,15 @@ const handleError = (message, status, data = []) => {
     return err;
 }
 
-const privateKey = fs.readFileSync(path.join(__dirname, '../../key.pem'));
-const publicCert = fs.readFileSync(path.join(__dirname, '../../cert.pem'));
+const privateKey = fs.readFileSync(process.env.PRIVATE_KEY_PATH);
+const publicCert = fs.readFileSync(process.env.PUBLIC_KEY_PATH);
+const generateAccessToken = user => {
+    return jwt.sign({ userId: user._id, name: user.name }, privateKey, { algorithm: 'RS256', expiresIn: process.env.REFRESH_TOKEN_LIFE })
+}
+
+const generateRefreshToken = user => {
+    return jwt.sign({ userId: user._id, name: user.name }, privateKey, { algorithm: 'RS256', expiresIn: process.env.REFRESH_TOKEN_LIFE })
+}
 
 exports.register = async (req, res, next) => {
     const { name, email, password } = req.body;
@@ -38,46 +45,78 @@ exports.register = async (req, res, next) => {
             data
         });
     } catch (error) {
-        const msg = error.errorResponse.errmsg || 'Registration Failed';
+        const msg = error.message || 'Registration Failed';
         next(handleError(msg, 400))
     }
 }
 
 // PROSES TOKEN
-
 exports.login = async (req, res, next) => {
     const { name, password } = req.body;
     try {
         const user = await User.findOne({ name });
         if (!user) {
             return next(handleError("user not found", 400))
-            // return = proses akhir aplikasi
-            // teknik tuk reduce penggunaan if else
         }
-        const correctPassword = await bcrypt.compare(password, user.password); // boolean;
+        const correctPassword = await bcrypt.compare(password, user.password);
         if (!correctPassword) {
             return next(handleError("Invalid Password", 400))
-        }
-        const token = jwt.sign({ userId: user.data?._id }, privateKey, { algorithm: 'RS256', expiresIn: '1h' });
-        res.status(201).json({ token })
+        };
+        const accessToken = generateAccessToken(user);
+        const refreshToken = generateRefreshToken(user);
+        res.cookie('refreshToken', refreshToken, { httpOnly: true })
+        // res.cookie = create cookie baru dengan 'name', value
+        // httpOnly = true -> cookie hanya dapat diakses oleh server 
+        // dan tidak dapat diakses / modifikasi oleh JS yang jalan di browser
+        res.status(201).json({ accessToken })
 
     } catch (error) {
-        const msg = error.errorResponse?.errmsg || 'Authentication Failed';
+        const msg = error.message || 'Authentication Failed';
         next(handleError(msg, 400))
     }
 }
 
 // middleware to verify token
 exports.verifyToken = async (req, res, next) => {
-    const token = req.headers['authorization'].split(' ')[1];
+    const token = req.rawHeaders[1]?.split(' ')[1];
+    // const token = req.rawHeaders[19]?.split('=')[1];
     if (!token) {
         return next(handleError('No token provided', 403))
     };
-    jwt.verify(token, publicCert, { algorithms: ['RS256'] }, (err, decoded) => {
-        if (err) {
-            return next(handleError('Failed to authenticate token', 403))
+    jwt.verify(token, publicCert, { algorithms: ['RS256'] }, async (err, decoded) => {
+        if (err && err.name == 'TokenExpiredError') {
+            return await postToken(req, res, next)
+        } else if (err) {
+            return next(handleError('Fail to authenticate token', 403))
         }
         req.userId = decoded.userId;
-        next();
+        req.name = decoded.name;
+        return next();
     })
+}
+
+// dipanggil ketika verifyToken udah kadaluarsa
+const postToken = async (req, res, next) => {
+    const { name } = req.body;
+    const refreshToken = req.headers['authorization']?.split(' ')[1].split(' ')[0];
+
+    if (!refreshToken) return next(handleError('No token provided', 403));
+    try {
+
+        jwt.verify(refreshToken, publicCert, { algorithms: ['RS256'] }, async (err, decoded) => {
+            if (err) {
+                const user = await User.findOne({ name: 'nalsalOK' });// 'nalsalOK adalah nama user saat login
+                if (!user) return next(handleError('User not found', 400));
+
+                const accessToken = generateAccessToken(user);
+                const newRefreshToken = generateRefreshToken(user);
+                res.cookie('refreshToken', newRefreshToken, { httpOnly: true });
+                return res.status(201).json({ accessToken });
+            }
+            return next()
+        })
+    } catch (error) {
+        const msg = error.message || 'Failed to process token';
+        return next(handleError(msg, 400));
+    }
 }
