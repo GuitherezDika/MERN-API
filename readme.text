@@ -412,6 +412,11 @@ deleteBlog
     OK
 HIT API = OK
 
+PRIVATE Key ----- KEREN
+openssl genrsa -out private.key 2048
+
+PUBLIC Key ----- KEREN
+openssl rsa -in private.key -outform PEM -pubout -out public.key
 ========
 Berikut adalah beberapa hal yang dapat Anda pertimbangkan untuk meningkatkan keamanan dan kegunaan lebih lanjut:
 
@@ -438,3 +443,5 @@ Membuat Notifikasi Android
 Publish App
 
 =====
+
+vercel login

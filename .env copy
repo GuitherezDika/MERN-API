@@ -1,0 +1,5 @@
+PRIVATE_KEY_PATH="C:\Users\62240512\Documents\website\REACT_JS\prawito hudoro\mern-api\key.pem"
+PUBLIC_KEY_PATH="C:\Users\62240512\Documents\website\REACT_JS\prawito hudoro\mern-api\cert.pem"
+SECRET_KEY="AWESOME_JAVASCRIPT_PROGRAMME"
+ACCESS_TOKEN_LIFE=11m
+REFRESH_TOKEN_LIFE=7d
