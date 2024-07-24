@@ -445,3 +445,45 @@ Publish App
 =====
 
 vercel login
+web vercel import file env
+tuk cek di lokal = vercel env ls 
+
+ name                       value               environments        created
+ REFRESH_TOKEN_LIFE         Encrypted           Development         7m ago
+ ACCESS_TOKEN_LIFE          Encrypted           Development         7m ago
+ SECRET_KEY                 Encrypted           Development         7m ago
+ PUBLIC_KEY_PATH            Encrypted           Development         7m ago
+ PRIVATE_KEY_PATH           Encrypted           Development         7m ago
+
+ OKK 
+
+ mongo db atlas
+ https://cloud.mongodb.com/v2/5edc97847548892b1bf7abce#/setup/access?includeToast=true
+
+ create database baru pada project cluster EmployeeApp
+ databases = mern-app
+ username = mahardika
+ password = mahardika12
+
+
+
+Congratulations on setting up access rules!
+You will now be able to connect to your deployments. You can continue to add and update access rules in Database Access and Network Access.
+
+database mern-app
+klik 'connect'
+Connect to your application
+= Drivers 
+= Add your connection string into your application code
+= mongodb+srv://mahardika:mahardika12@mern-app.j1nptro.mongodb.net/?retryWrites=true&w=majority&appName=mern-app
+
+.env
+MONGODB_CONNECTION_URL="mongodb+srv://mahardika:mahardika12@mern-app.j1nptro.mongodb.net/?retryWrites=true&w=majority&appName=mern-app"
+
+pada project perlu di tambahkan dalam config ke mongodb
+
+const env = require('dotenv').config(); // harus ditambahkan untuk akses .env
+const url = process.env.MONGODB_CONNECTION_URL 
+
+test pada postman 
+MANTAB===

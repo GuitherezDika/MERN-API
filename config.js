@@ -1,6 +1,8 @@
 const mongoose = require('mongoose');
+const env = require('dotenv').config();
 
-const url = 'mongodb://localhost:27017/mern_db'
+const url = process.env.MONGODB_CONNECTION_URL;
+
 const options = { useNewUrlParser: true };
 
 async function connectToDatabase() {
