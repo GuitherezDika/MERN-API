@@ -466,7 +466,6 @@ tuk cek di lokal = vercel env ls
  password = mahardika12
 
 
-
 Congratulations on setting up access rules!
 You will now be able to connect to your deployments. You can continue to add and update access rules in Database Access and Network Access.
 
@@ -487,3 +486,24 @@ const url = process.env.MONGODB_CONNECTION_URL
 
 test pada postman 
 MANTAB===
+
+MENAMBAHKAN IP address
+link = https://mern-api-tan.vercel.app/
+cek api terminal = ping mern-api-tan.vercel.app
+
+Pinging mern-api-tan.vercel.app [76.76.21.22] with 32 bytes of data:
+Reply from 76.76.21.22: bytes=32 time=12ms TTL=248
+Reply from 76.76.21.22: bytes=32 time=7ms TTL=248
+Reply from 76.76.21.22: bytes=32 time=10ms TTL=248
+Reply from 76.76.21.22: bytes=32 time=10ms TTL=248
+
+cara 2
+nslookup mern-api-tan.vercel.app
+Server:  IDAZRDC01.wil.local ==> SERVER wifi laptop
+Address:  10.1.88.88
+
+Non-authoritative answer:
+Name:    mern-api-tan.vercel.app
+Addresses:  76.76.21.98
+          76.76.21.22
+

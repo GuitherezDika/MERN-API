@@ -15,10 +15,9 @@ const handleError = (message, status, data = []) => {
     return err;
 }
 
-const privateKey = process.env.PRIVATE_KEY_PATH;
-const publicCert = process.env.PUBLIC_KEY_PATH;
-// const privateKey = fs.readFileSync(process.env.PRIVATE_KEY_PATH);
-// const publicCert = fs.readFileSync(process.env.PUBLIC_KEY_PATH);
+const privateKey = fs.readFileSync(process.env.PRIVATE_KEY_PATH, 'utf8');
+const publicCert = fs.readFileSync(process.env.PUBLIC_KEY_PATH, 'utf8');
+
 const generateAccessToken = user => {
     return jwt.sign({ userId: user._id, name: user.name }, privateKey, { algorithm: 'RS256', expiresIn: process.env.ACCESS_TOKEN_LIFE })
 }
